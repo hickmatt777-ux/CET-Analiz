@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CET - Sipariş Denetim Analiz Raporu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+        }
+        
+        .stat-card.critical {
+            border-left-color: #dc3545;
+        }
+        
+        .stat-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .stat-card.success {
+            border-left-color: #28a745;
+        }
+        
+        .stat-card h3 {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .orders-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .order-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        
+        .order-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .order-number {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge.critical {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge.warning {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .badge.success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge.info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .detail-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-weight: bold;
+            color: #212529;
+        }
+        
+        .denetim-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .denetim-info.critical {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        
+        .denetim-info.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+        
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        .action-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .action-list li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .action-list li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .comparison-table th {
+            background: #1e3c72;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .winner {
+            background: #d4edda !important;
+            font-weight: bold;
+        }
+        
+        .footer {
+            background: #1e3c72;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Sipariş Denetim Analiz Raporu</h1>
+            <p>CET - Customs Engineering Tool</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Tarih: 31 Ocak 2026 | Toplam Sipariş: 7</p>
+        </div>
+        
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-card critical">
+                <h3>Denetime Tabi</h3>
+                <div class="value">4</div>
+                <div class="label">Sipariş</div>
+            </div>
+            
+            <div class="stat-card success">
+                <h3>Kapsam Dışı</h3>
+                <div class="value">2</div>
+                <div class="label">Sipariş</div>
+            </div>
+            
+            <div class="stat-card success">
+                <h3>Denetim Dışı</h3>
+                <div class="value">1</div>
+                <div class="label">Sipariş</div>
+            </div>
+            
+            <div class="stat-card warning">
+                <h3>Kritik (BULK)</h3>
+                <div class="value">1</div>
+                <div class="label">Numune Alım Zorunlu</div>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Critical Alerts -->
+            <div class="section">
+                <div class="alert alert-danger">
+                    <h3 style="margin-bottom: 15px;">🔴 ACİL DİKKAT GEREKTİREN SİPARİŞLER</h3>
+                    <ul class="action-list">
+                        <li><strong>SİPARİŞ 4500101012 (OLI 8000):</strong> BULK - Gümrük Yönetmeliği 196. Madde → Numune alım zorunlu (5-15 gün gecikme)</li>
+                        <li><strong>SİPARİŞ 4500101017 (A179 PIPE):</strong> 2026-01 Tebliği → TS EN 10305-1 standardı gerekli</li>
+                        <li><strong>SİPARİŞ 4500101013 (CONTROL PANEL):</strong> CE İşareti Tebliği → LVD + EMC belgeleri gerekli</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Orders -->
+            <div class="section">
+                <h2 class="section-title">📦 Sipariş Detayları</h2>
+                
+                <div class="orders-grid">
+                    <!-- Sipariş 1 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-number">SİPARİŞ 4500101010</div>
+                            <span class="badge warning">Belirsiz</span>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Tedarikçi</div>
+                                <div class="detail-value">ELLIOT UK</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ürün</div>
+                                <div class="detail-value">GASKET PLASTIC</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">GTİP</div>
+                                <div class="detail-value">3926.90.97.90.18</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Menşe</div>
+                                <div class="detail-value">England → England</div>
+                            </div>
+                        </div>
+                        <div class="denetim-info warning">
+                            <strong>Denetim Durumu:</strong> Kapsam Dışı (ancak dikkat)<br>
+                            <strong>Tebliğ:</strong> 2026-12, 2026-17<br>
+                            <strong>Not:</strong> "Diğerleri" kategorisi - İhtiyati test raporu önerilebilir
+                        </div>
+                    </div>
+                    
+                    <!-- Sipariş 2 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-number">SİPARİŞ 4500101011</div>
+                            <span class="badge success">Denetim Dışı</span>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Tedarikçi</div>
+                                <div class="detail-value">SERCK SERVICE</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ürün</div>
+                                <div class="detail-value">EXCHANGER</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">GTİP</div>
+                                <div class="detail-value">8419.50.80.00.00</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Menşe</div>
+                                <div class="detail-value">UAE → UAE</div>
+                            </div>
+                        </div>
+                        <div class="denetim-info success">
+                            <strong>Denetim Durumu:</strong> ✅ Denetim Dışı<br>
+                            <strong>Sebep:</strong> GTİP hiçbir tebliğde yok<br>
+                            <strong>Aksiyon:</strong> Normal gümrükleme
+                        </div>
+                    </div>
+                    
+                    <!-- Sipariş 3 - BULK -->
+                    <div class="order-card" style="border: 3px solid #dc3545;">
+                        <div class="order-header">
+                            <div class="order-number">SİPARİŞ 4500101012</div>
+                            <span class="badge critical">🔴 BULK - ACİL</span>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Tedarikçi</div>
+                                <div class="detail-value">INNOSPEC LIMITED</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ürün</div>
+                                <div class="detail-value">OLI 8000</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">GTİP</div>
+                                <div class="detail-value">3823.13.00.00.00</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Menşe</div>
+                                <div class="detail-value">Germany → Japan</div>
+                            </div>
+                            <div class="detail-item" style="background: #dc3545; color: white;">
+                                <div class="detail-label" style="color: white;">⚠️ BULK</div>
+                                <div class="detail-value" style="color: white;">YES</div>
+                            </div>
+                        </div>
+                        <div class="denetim-info critical">
+                            <strong>🔴 ÖZEL DENETİM:</strong> Gümrük Yönetmeliği 196. Madde<br>
+                            <strong>ZORUNLU İŞLEM:</strong> Numune alım (Gümrük laboratuvarı)<br>
+                            <strong>Süre:</strong> 5-15 iş günü gecikme<br>
+                            <strong>Alternatif:</strong> Teminat karşılığı eşya çekilebilir
+                        </div>
+                    </div>
+                    
+                    <!-- Sipariş 4 - CE -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-number">SİPARİŞ 4500101013</div>
+                            <span class="badge critical">Denetime Tabi</span>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Tedarikçi</div>
+                                <div class="detail-value">ABC GERMANY</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ürün</div>
+                                <div class="detail-value">CONTROL PANEL</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">GTİP</div>
+                                <div class="detail-value">8537.10.10.00.00</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Menşe</div>
+                                <div class="detail-value">Germany → Switzerland</div>
+                            </div>
+                        </div>
+                        <div class="denetim-info critical">
+                            <strong>Tebliğ:</strong> 2026-09 CE İşareti Tebliği<br>
+                            <strong>Gerekli:</strong> CE Uygunluk Beyanı, LVD + EMC test raporları<br>
+                            <strong>Maliyet:</strong> Belgeler varsa 0-200 TL / Yoksa 25,000-80,000 TL<br>
+                            <strong>Aksiyon:</strong> Tedarikçiden CE belgeleri talep et
+                        </div>
+                    </div>
+                    
+                    <!-- Sipariş 5-6 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-number">SİPARİŞ 4500101015 & 4500101016</div>
+                            <span class="badge success">Kapsam Dışı</span>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Tedarikçi</div>
+                                <div class="detail-value">XYZ</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ürün</div>
+                                <div class="detail-value">GASKET PLASTIC</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">GTİP</div>
+                                <div class="detail-value">3926.90.97.90.29</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Menşe</div>
+                                <div class="detail-value">England → Japan/S.Korea</div>
+                            </div>
+                        </div>
+                        <div class="denetim-info success">
+                            <strong>Denetim Durumu:</strong> ✅ Kapsam Dışı<br>
+                            <strong>Tebliğ:</strong> 2026-17 (Anne ve Bebek Ürünleri)<br>
+                            <strong>Sebep:</strong> "Diğerleri" kategorisi - eşyayı temsil etmiyor<br>
+                            <strong>Aksiyon:</strong> Normal gümrükleme
+                        </div>
+                    </div>
+                    
+                    <!-- Sipariş 7 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-number">SİPARİŞ 4500101017</div>
+                            <span class="badge critical">Denetime Tabi</span>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Tedarikçi</div>
+                                <div class="detail-value">XYZ</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Ürün</div>
+                                <div class="detail-value">A179 PIPE</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">GTİP</div>
+                                <div class="detail-value">7304.31.80.90.00</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Menşe</div>
+                                <div class="detail-value">Spain → China</div>
+                            </div>
+                        </div>
+                        <div class="denetim-info critical">
+                            <strong>Tebliğ:</strong> 2026-01 Standartlara Uygunluk Denetimi<br>
+                            <strong>Gerekli Standart:</strong> TS EN 10305-1<br>
+                            <strong>Sorun:</strong> Ürün A179 (ASTM) standardında<br>
+                            <strong>Çözüm 1:</strong> Kapsam dışı başvurusu (farklı standart gerekçesi)<br>
+                            <strong>Çözüm 2:</strong> TSE eşdeğerlik belgesi
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comparison Table -->
+            <div class="section">
+                <h2 class="section-title">💰 Maliyet Karşılaştırması</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Sipariş</th>
+                            <th>Tedarikçi</th>
+                            <th>Denetim</th>
+                            <th>Vergi Maliyeti</th>
+                            <th>Denetim Maliyeti</th>
+                            <th>Öncelik</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="winner">
+                            <td>4500101013</td>
+                            <td>ABC GERMANY</td>
+                            <td>CE İşareti</td>
+                            <td>783 EUR</td>
+                            <td>0-95K TL</td>
+                            <td>🏆 EN UCUZ (belgeler hazırsa)</td>
+                        </tr>
+                        <tr>
+                            <td>4500101017</td>
+                            <td>XYZ</td>
+                            <td>Standart</td>
+                            <td>1,393 EUR</td>
+                            <td>500-15K TL</td>
+                            <td>İkinci seçenek</td>
+                        </tr>
+                        <tr>
+                            <td>4500101015/16</td>
+                            <td>XYZ</td>
+                            <td>Kapsam Dışı</td>
+                            <td>1,545 EUR</td>
+                            <td>0 TL</td>
+                            <td>Güvenli</td>
+                        </tr>
+                        <tr style="background: #fff3cd;">
+                            <td>4500101012</td>
+                            <td>INNOSPEC</td>
+                            <td>BULK</td>
+                            <td>-</td>
+                            <td>Teminat</td>
+                            <td>⚠️ 5-15 gün gecikme</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Action Plan -->
+            <div class="section">
+                <h2 class="section-title">🎯 Aksiyon Planı</h2>
+                
+                <div class="alert alert-info">
+                    <h3 style="margin-bottom: 15px;">Bugün Yapılacaklar:</h3>
+                    <ul class="action-list">
+                        <li>INNOSPEC'e bilgi ver (BULK - numune alım)</li>
+                        <li>ABC GERMANY'den CE belgeleri talep et</li>
+                        <li>XYZ'den A179 ASTM sertifikası talep et</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <h3 style="margin-bottom: 15px;">3 Gün İçinde:</h3>
+                    <ul class="action-list">
+                        <li>A179 için kapsam dışı başvurusu hazırla</li>
+                        <li>BULK için teminat planı yap</li>
+                        <li>CE belgeleri gelmediyse alternatif tedarikçi araştır</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Summary -->
+            <div class="section">
+                <div class="alert alert-success">
+                    <h3 style="margin-bottom: 15px;">✅ Özet Tavsiye</h3>
+                    <p><strong>En İyi Seçenek:</strong> SİPARİŞ 4500101013 (ABC GERMANY) - Toplam maliyet 783 EUR, 762 EUR tasarruf</p>
+                    <p><strong>Şart:</strong> CE belgeleri hazır olmalı</p>
+                    <p><strong>Kritik Risk:</strong> SİPARİŞ 4500101012 (BULK) - Numune alım zorunlu, 5-15 gün gecikme</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <h3>CET - Customs Engineering Tool</h3>
+            <p>Tüpraş Gümrük Mevzuat Müdürlüğü</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Tarih: 31 Ocak 2026 | Analiz Sayısı: 7 Sipariş | Database: 16,054 GTİP</p>
+        </div>
+    </div>
+</body>
+</html>
