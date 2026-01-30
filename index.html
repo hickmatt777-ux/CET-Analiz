@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CET Sipariş Analizi - Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .critical { background: #e74c3c; color: white; }
+        .success { background: #27ae60; color: white; }
+        .warning { background: #f39c12; color: white; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+        }
+        
+        .highlight {
+            background: #ffffcc;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 CET Sipariş Denetim Analizi</h1>
+        <p>Customs Engineering Tool - 31 Ocak 2026</p>
+    </div>
+
+    <div class="card">
+        <h2>📈 Özet İstatistikler</h2>
+        <p>Toplam Sipariş: <strong>7</strong></p>
+        <p>⚠️ Denetime Tabi: <strong>4 sipariş</strong></p>
+        <p>✅ Denetim Dışı: <strong>3 sipariş</strong></p>
+    </div>
+
+    <div class="card">
+        <h2>🔴 KRİTİK DİKKAT GEREKTİREN SİPARİŞLER</h2>
+        
+        <h3 style="margin-top: 20px;">1. SİPARİŞ 4500101012 - OLI 8000</h3>
+        <span class="badge critical">BULK - ACİL</span>
+        <ul>
+            <li><strong>Tedarikçi:</strong> INNOSPEC LIMITED</li>
+            <li><strong>GTİP:</strong> 3823.13.00.00.00</li>
+            <li><strong>Menşe:</strong> Germany → Japan</li>
+            <li><strong>⚠️ ÖZEL DENETİM:</strong> Gümrük Yönetmeliği 196. Madde</li>
+            <li><strong>Zorunlu İşlem:</strong> Numune alım (5-15 gün gecikme)</li>
+        </ul>
+
+        <h3 style="margin-top: 20px;">2. SİPARİŞ 4500101017 - A179 PIPE</h3>
+        <span class="badge critical">Denetime Tabi</span>
+        <ul>
+            <li><strong>Tedarikçi:</strong> XYZ</li>
+            <li><strong>GTİP:</strong> 7304.31.80.90.00</li>
+            <li><strong>Tebliğ:</strong> 2026-01 Standartlara Uygunluk</li>
+            <li><strong>Gerekli:</strong> TS EN 10305-1 standardı</li>
+            <li><strong>Çözüm:</strong> Kapsam dışı başvurusu veya eşdeğerlik belgesi</li>
+        </ul>
+
+        <h3 style="margin-top: 20px;">3. SİPARİŞ 4500101013 - CONTROL PANEL</h3>
+        <span class="badge critical">Denetime Tabi</span>
+        <ul>
+            <li><strong>Tedarikçi:</strong> ABC GERMANY</li>
+            <li><strong>GTİP:</strong> 8537.10.10.00.00</li>
+            <li><strong>Tebliğ:</strong> 2026-09 CE İşareti</li>
+            <li><strong>Gerekli:</strong> CE Uygunluk Beyanı, LVD + EMC test raporları</li>
+            <li><strong>Maliyet:</strong> Belgeler varsa 0-200 TL / Yoksa 25,000-80,000 TL</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>💰 Tüm Siparişler - Karşılaştırma Tablosu</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sipariş No</th>
+                    <th>Tedarikçi</th>
+                    <th>Ürün</th>
+                    <th>GTİP</th>
+                    <th>Denetim</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>4500101010</td>
+                    <td>ELLIOT UK</td>
+                    <td>GASKET PLASTIC</td>
+                    <td>3926.90.97.90.18</td>
+                    <td><span class="badge warning">Belirsiz</span></td>
+                    <td>Kapsam dışı (dikkatli)</td>
+                </tr>
+                <tr>
+                    <td>4500101011</td>
+                    <td>SERCK SERVICE</td>
+                    <td>EXCHANGER</td>
+                    <td>8419.50.80.00.00</td>
+                    <td><span class="badge success">Denetim Dışı</span></td>
+                    <td>Normal gümrükleme</td>
+                </tr>
+                <tr class="highlight">
+                    <td>4500101012</td>
+                    <td>INNOSPEC</td>
+                    <td>OLI 8000</td>
+                    <td>3823.13.00.00.00</td>
+                    <td><span class="badge critical">BULK</span></td>
+                    <td>⚠️ Numune alım zorunlu</td>
+                </tr>
+                <tr class="highlight">
+                    <td>4500101013</td>
+                    <td>ABC GERMANY</td>
+                    <td>CONTROL PANEL</td>
+                    <td>8537.10.10.00.00</td>
+                    <td><span class="badge critical">CE İşareti</span></td>
+                    <td>LVD + EMC gerekli</td>
+                </tr>
+                <tr>
+                    <td>4500101015</td>
+                    <td>XYZ</td>
+                    <td>GASKET PLASTIC</td>
+                    <td>3926.90.97.90.29</td>
+                    <td><span class="badge success">Kapsam Dışı</span></td>
+                    <td>"Diğerleri" kategorisi</td>
+                </tr>
+                <tr>
+                    <td>4500101016</td>
+                    <td>XYZ</td>
+                    <td>GASKET PLASTIC</td>
+                    <td>3926.90.97.90.29</td>
+                    <td><span class="badge success">Kapsam Dışı</span></td>
+                    <td>"Diğerleri" kategorisi</td>
+                </tr>
+                <tr class="highlight">
+                    <td>4500101017</td>
+                    <td>XYZ</td>
+                    <td>A179 PIPE</td>
+                    <td>7304.31.80.90.00</td>
+                    <td><span class="badge critical">Standart</span></td>
+                    <td>TS EN 10305-1 gerekli</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>🎯 Acil Aksiyon Planı</h2>
+        <h3>Bugün Yapılacaklar:</h3>
+        <ol>
+            <li><strong>INNOSPEC (OLI 8000):</strong> Tedarikçiye bilgi ver - BULK numune alım</li>
+            <li><strong>ABC GERMANY:</strong> CE belgeleri talep et</li>
+            <li><strong>XYZ (A179):</strong> ASTM A179 sertifikası talep et</li>
+        </ol>
+
+        <h3 style="margin-top: 20px;">3 Gün İçinde:</h3>
+        <ol>
+            <li>A179 için kapsam dışı başvurusu hazırla</li>
+            <li>BULK için teminat planı yap</li>
+            <li>CE belgeleri gelmediyse alternatif tedarikçi araştır</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h2>✅ Özet Tavsiye</h2>
+        <p><strong>En İyi Seçenek:</strong> SİPARİŞ 4500101013 (ABC GERMANY)</p>
+        <ul>
+            <li>Toplam maliyet: 783 EUR</li>
+            <li>Tasarruf: 762 EUR</li>
+            <li>Şart: CE belgeleri hazır olmalı</li>
+        </ul>
+        
+        <p style="margin-top: 20px;"><strong>Kritik Risk:</strong> SİPARİŞ 4500101012 (BULK)</p>
+        <ul>
+            <li>Numune alım zorunlu</li>
+            <li>5-15 gün gecikme</li>
+            <li>Teminat karşılığı çekilebilir</li>
+        </ul>
+    </div>
+
+    <div class="header" style="margin-top: 30px;">
+        <p>CET - Customs Engineering Tool</p>
+        <p style="font-size: 0.9em; margin-top: 10px;">Tüpraş Gümrük Mevzuat Müdürlüğü</p>
+        <p style="font-size: 0.8em; margin-top: 5px;">Database: 16,054 GTİP | 37 Denetim Tebliği</p>
+    </div>
+
+</body>
+</html>
